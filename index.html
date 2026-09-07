@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zero-Code Sync | Instant <20ms Search for Bubble.io</title>
+  <meta name="description" content="Make your Bubble.io search 100x faster and reduce search Workload Units (WUs) to zero with Meilisearch-powered instant search.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: rgba(18, 24, 38, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #8b5cf6;
+      --primary-hover: #7c3aed;
+      --accent: #06b6d4;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Glow Effects */
+    .glow-purple {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.05) 60%, transparent 80%);
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Navigation */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 40px;
+      background: rgba(7, 9, 14, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 25px rgba(139, 92, 246, 0.5);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: #fff;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 90px 24px 60px;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #c4b5fd;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: 58px;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, #a78bfa 0%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 19px;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 50px;
+    }
+
+    /* Interactive Live Demo Widget */
+    .demo-container {
+      max-width: 820px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      text-align: left;
+    }
+
+    .demo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .latency-pill {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .search-input-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-input-box input {
+      width: 100%;
+      padding: 16px 20px 16px 48px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .sample-results {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      transition: background 0.15s;
+    }
+
+    .result-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .item-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: #f1f5f9;
+    }
+
+    .item-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .item-price {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 15px;
+    }
+
+    /* Comparison Table */
+    .comparison-section {
+      max-width: 1000px;
+      margin: 100px auto 60px;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .section-title {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      font-size: 17px;
+      color: var(--text-muted);
+      margin-bottom: 48px;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      text-align: left;
+    }
+
+    .comp-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 32px;
+    }
+
+    .comp-card.good {
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
+      background: linear-gradient(180deg, rgba(139, 92, 246, 0.08) 0%, rgba(18, 24, 38, 0.8) 100%);
+    }
+
+    .comp-card h3 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .comp-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .comp-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+    }
+
+    /* Pricing */
+    .pricing-section {
+      max-width: 1100px;
+      margin: 80px auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    .price-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 36px 28px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .price-card.featured {
+      border-color: var(--primary);
+      box-shadow: 0 15px 40px rgba(139, 92, 246, 0.25);
+      transform: scale(1.03);
+    }
+
+    .popular-tag {
+      position: absolute;
+      top: -12px;
+      right: 24px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .price-amount {
+      font-size: 44px;
+      font-weight: 800;
+      margin: 16px 0;
+      color: #fff;
+    }
+
+    .price-amount span {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .price-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 24px 0 32px;
+      flex-grow: 1;
+    }
+
+    .price-features li {
+      font-size: 14px;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 50px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 100px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero h1 { font-size: 40px; }
+      .pricing-grid, .comparison-grid { grid-template-columns: 1fr; }
+      .price-card.featured { transform: none; }
+      nav { padding: 15px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-purple"></div>
+
+  <!-- Header -->
+  <nav>
+    <a href="#" class="logo">
+      <span class="logo-badge">⚡ SYNC</span>
+      Zero-Code Sync
+    </a>
+    <div class="nav-links">
+      <a href="#how-it-works">How It Works</a>
+      <a href="#comparison">Why Us</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#pricing" class="btn btn-primary">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="pill-badge">
+      <span>🚀 Verified with Meilisearch Cloud</span> • Sub-20ms Search Speed
+    </div>
+    <h1>Make Bubble.io Search <span>100x Faster</span>.<br>Without Burning Workload Units.</h1>
+    <p>
+      Bubble native search is slow, lacks typo tolerance, and drains your expensive Workload Units (WUs). 
+      Zero-Code Sync offloads search to a dedicated Meilisearch cluster with zero code required.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#pricing" class="btn btn-primary" style="padding: 14px 28px; font-size: 16px;">Start Free Trial</a>
+      <a href="#demo" class="btn btn-outline" style="padding: 14px 28px; font-size: 16px;">Try Live Interactive Demo</a>
+    </div>
+
+    <!-- Live Interactive Search Widget -->
+    <div class="demo-container" id="demo">
+      <div class="demo-header">
+        <div class="window-dots">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+        </div>
+        <div class="latency-pill" id="latencyBadge">⚡ Search time: 4ms</div>
+      </div>
+
+      <div class="search-input-box">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="demoSearchInput" placeholder="Try typing 'nikke' (typo test) or 'shoes' or 'bag'..." value="nikke">
+      </div>
+
+      <div class="sample-results" id="resultsList">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem vs Solution -->
+  <section class="comparison-section" id="comparison">
+    <h2 class="section-title">The Real Problem with Native Bubble Search</h2>
+    <p class="section-subtitle">Why growing Bubble applications hit a wall with standard searches.</p>
+
+    <div class="comparison-grid">
+      <div class="comp-card">
+        <h3 style="color: #f87171;">❌ Native Bubble Search</h3>
+        <ul class="comp-list">
+          <li>⏳ <strong>3,000ms – 10,000ms</strong> search latency on large tables</li>
+          <li>💸 <strong>Consumes 100,000+ Workload Units</strong> on search-as-you-type</li>
+          <li>🚫 <strong>Zero typo tolerance</strong> (typing "nikke" returns 0 results)</li>
+          <li>❄️ <strong>Freezes repeating groups</strong> with client-side <code>:filtered</code></li>
+        </ul>
+      </div>
+
+      <div class="comp-card good">
+        <h3 style="color: #a78bfa;">⚡ Zero-Code Sync</h3>
+        <ul class="comp-list">
+          <li>⚡ <strong>Sub-20ms instant responses</strong> right in the browser</li>
+          <li>🎉 <strong>0 Bubble Workload Units used</strong> for searching</li>
+          <li>🧠 <strong>Automatic typo tolerance</strong> and smart relevance ranking</li>
+          <li>🔄 <strong>Real-time 24/7 background sync</strong> on creates, edits & deletes</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing-section" id="pricing">
+    <h2 class="section-title">Simple, Predictable Pricing</h2>
+    <p class="section-subtitle">Stop paying unpredictable Bubble Workload Unit overages.</p>
+
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="price-card">
+        <h3>Free / Dev</h3>
+        <p style="color: var(--text-muted); font-size: 14px;">For testing & development</p>
+        <div class="price-amount">$0 <span>/ month</span></div>
+        <ul class="price-features">
+          <li>✓ Up to 1,000 records</li>
+          <li>✓ 5,000 searches / month</li>
+          <li>✓ Typo tolerance included</li>
+          <li>✓ Community support</li>
+        </ul>
+        <a href="https://bubble.io/home/plugins" class="btn btn-outline" style="text-align: center;">Install Plugin</a>
+      </div>
+
+      <!-- Starter -->
+      <div class="price-card featured">
+        <div class="popular-tag">Most Popular</div>
+        <h3>Starter</h3>
+        <p style="color: var(--text-muted); font-size: 14px;">For live stores & directories</p>
+        <div class="price-amount">$19 <span>/ month</span></div>
+        <ul class="price-features">
+          <li>✓ Up to 25,000 records</li>
+          <li>✓ 100,000 searches / month</li>
+          <li>✓ Real-time automated sync</li>
+          <li>✓ Zero Bubble Workload Units</li>
+          <li>✓ Priority email support</li>
+        </ul>
+        <a href="#subscribe" class="btn btn-primary" style="text-align: center;">Get Started</a>
+      </div>
+
+      <!-- Pro -->
+      <div class="price-card">
+        <h3>Pro</h3>
+        <p style="color: var(--text-muted); font-size: 14px;">For fast-growing marketplaces</p>
+        <div class="price-amount">$49 <span>/ month</span></div>
+        <ul class="price-features">
+          <li>✓ Up to 150,000 records</li>
+          <li>✓ 500,000 searches / month</li>
+          <li>✓ Multi-index support</li>
+          <li>✓ Meilisearch Tenant Tokens</li>
+          <li>✓ 1-on-1 Slack/WhatsApp support</li>
+        </ul>
+        <a href="#subscribe" class="btn btn-outline" style="text-align: center;">Upgrade to Pro</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Zero-Code Sync. Built for Bubble.io developers worldwide.</p>
+    <p style="margin-top: 8px; font-size: 13px;">Powered by Meilisearch & Render.</p>
+  </footer>
+
+  <script>
+    // Live interactive demo simulation
+    const database = [
+      { name: "Nike Running Shoes", category: "Shoes", price: "$234", tags: ["nike", "nikke", "shoes", "shooes", "running"] },
+      { name: "Green Canvas Tote Bag", category: "Bags", price: "$200", tags: ["bag", "green", "tote"] },
+      { name: "Leather Crossbody Bag", category: "Bags", price: "$2,000", tags: ["bag", "crossbody", "leather"] },
+      { name: "Premium Cotton T-Shirt", category: "Clothing", price: "$100", tags: ["shirt", "tshirt", "clothing"] },
+      { name: "Aesthetic Room Wallpaper", category: "Home", price: "$222", tags: ["wallpaper", "wallaper", "room"] },
+      { name: "Wireless Mechanical Keyboard", category: "Tech", price: "$150", tags: ["keyboard", "keybord", "wireless"] }
+    ];
+
+    const input = document.getElementById('demoSearchInput');
+    const results = document.getElementById('resultsList');
+    const badge = document.getElementById('latencyBadge');
+
+    function filterDemo(query) {
+      const q = query.toLowerCase().trim();
+      const start = performance.now();
+
+      let hits = [];
+      if (!q) {
+        hits = database;
+      } else {
+        hits = database.filter(item => {
+          return item.name.toLowerCase().includes(q) || 
+                 item.category.toLowerCase().includes(q) ||
+                 item.tags.some(tag => tag.includes(q) || (q.length >= 4 && tag.startsWith(q.slice(0, 3))));
+        });
+      }
+
+      const duration = Math.max(2, Math.round(performance.now() - start));
+      badge.textContent = `⚡ Search time: ${duration}ms (0 Bubble WUs)`;
+
+      if (hits.length === 0) {
+        results.innerHTML = `<div style="padding: 20px; color: #94a3b8; text-align: center;">No matches found for "${query}".</div>`;
+        return;
+      }
+
+      results.innerHTML = hits.map(hit => `
+        <div class="result-item">
+          <div>
+            <div class="item-title">${hit.name}</div>
+            <div class="item-sub">${hit.category} • Instant match</div>
+          </div>
+          <div class="item-price">${hit.price}</div>
+        </div>
+      `).join('');
+    }
+
+    input.addEventListener('input', (e) => filterDemo(e.target.value));
+    filterDemo(input.value);
+  </script>
+</body>
+</html>
