@@ -2,50 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zero-Code Sync — Ultra-Fast Search Layer for Bubble.io</title>
-  <meta name="description" content="Make Bubble.io search 100x faster, typo-tolerant, and reduce search Workload Units to zero. Powered by Meilisearch.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Zero-Code Sync — Ultra-Fast Search Engine for Bubble.io</title>
+  <meta name="description" content="Make Bubble.io search 100x faster, typo-tolerant, and reduce search Workload Units (WUs) to zero. Powered by Meilisearch.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
       --bg: #030712;
-      --card-bg: rgba(15, 23, 42, 0.65);
+      --card-bg: rgba(15, 23, 42, 0.72);
       --card-border: rgba(255, 255, 255, 0.08);
-      --card-border-hover: rgba(139, 92, 246, 0.4);
+      --card-border-glow: rgba(139, 92, 246, 0.35);
       --primary: #8b5cf6;
       --primary-light: #a78bfa;
+      --primary-dark: #6d28d9;
       --accent-cyan: #06b6d4;
       --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --text-subtle: #64748b;
     }
 
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: clip;
+      width: 100%;
     }
 
     body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: clip;
       background-color: var(--bg);
       color: var(--text-main);
-      overflow-x: hidden;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      position: relative;
     }
 
-    /* Ambient Aurora Glows */
+    /* Ambient Aurora Mesh - Constrained & Non-Overflowing */
     .aurora-container {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
       z-index: 0;
       overflow: hidden;
@@ -54,44 +67,44 @@
     .aurora-blob {
       position: absolute;
       border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.28;
-      animation: floatPulse 18s ease-in-out infinite alternate;
+      filter: blur(100px);
+      opacity: 0.22;
+      animation: floatPulse 20s ease-in-out infinite alternate;
+      will-change: transform;
     }
 
     .blob-1 {
-      width: 600px;
-      height: 600px;
+      width: min(500px, 85vw);
+      height: min(500px, 85vw);
       background: radial-gradient(circle, #6366f1 0%, transparent 70%);
-      top: -150px;
-      left: 20%;
+      top: -120px;
+      left: clamp(-100px, 5vw, 100px);
     }
 
     .blob-2 {
-      width: 500px;
-      height: 500px;
+      width: min(450px, 75vw);
+      height: min(450px, 75vw);
       background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
-      top: 250px;
-      right: 15%;
-      animation-delay: -5s;
+      top: 280px;
+      right: clamp(-100px, 5vw, 80px);
+      animation-delay: -6s;
     }
 
     .blob-3 {
-      width: 450px;
-      height: 450px;
+      width: min(400px, 70vw);
+      height: min(400px, 70vw);
       background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
-      bottom: 10%;
-      left: 30%;
-      animation-delay: -10s;
+      bottom: 100px;
+      left: 20%;
+      animation-delay: -12s;
     }
 
     @keyframes floatPulse {
       0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(40px, -30px) scale(1.08); }
-      100% { transform: translate(-30px, 40px) scale(0.95); }
+      50% { transform: translate(25px, -20px) scale(1.06); }
+      100% { transform: translate(-20px, 25px) scale(0.95); }
     }
 
-    /* Subtle Grid Background Pattern */
     .grid-overlay {
       position: fixed;
       top: 0;
@@ -101,8 +114,9 @@
       background-image: 
         linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 40px 40px;
-      mask-image: radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
+      background-size: 36px 36px;
+      mask-image: radial-gradient(ellipse at 50% 25%, black 40%, transparent 85%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 25%, black 40%, transparent 85%);
       pointer-events: none;
       z-index: 1;
     }
@@ -110,54 +124,58 @@
     /* Floating Pill Navigation */
     .nav-wrapper {
       position: fixed;
-      top: 24px;
+      top: clamp(10px, 2.5vw, 20px);
       left: 0;
       width: 100%;
       display: flex;
       justify-content: center;
       z-index: 100;
-      padding: 0 20px;
+      padding: 0 clamp(12px, 3vw, 24px);
     }
 
     nav {
       width: 100%;
-      max-width: 980px;
+      max-width: 960px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 24px;
-      background: rgba(15, 23, 42, 0.7);
+      padding: 10px clamp(14px, 3vw, 22px);
+      background: rgba(15, 23, 42, 0.82);
       backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 9999px;
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      gap: 12px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
       color: #fff;
       font-weight: 800;
-      font-size: 17px;
+      font-size: clamp(15px, 3.5vw, 17px);
       letter-spacing: -0.4px;
+      flex-shrink: 0;
     }
 
     .brand-icon {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       border-radius: 8px;
       background: linear-gradient(135deg, #8b5cf6, #06b6d4);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+      box-shadow: 0 0 14px rgba(139, 92, 246, 0.5);
+      flex-shrink: 0;
     }
 
     .nav-links {
       display: flex;
-      gap: 28px;
+      gap: clamp(16px, 2vw, 28px);
       align-items: center;
     }
 
@@ -167,6 +185,7 @@
       font-size: 14px;
       font-weight: 500;
       transition: color 0.2s ease;
+      white-space: nowrap;
     }
 
     .nav-links a:hover {
@@ -174,92 +193,123 @@
     }
 
     .btn-aura {
-      position: relative;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
-      padding: 10px 22px;
+      padding: 9px 18px;
       border-radius: 9999px;
-      font-size: 14px;
+      font-size: clamp(13px, 2.5vw, 14px);
       font-weight: 600;
       text-decoration: none;
       color: #fff;
       background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 0 25px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      overflow: hidden;
+      transition: all 0.25s ease;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .btn-aura:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 35px rgba(139, 92, 246, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.65);
     }
 
-    .btn-aura::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s;
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: 9999px;
+      font-size: clamp(13px, 2.5vw, 14px);
+      font-weight: 600;
+      text-decoration: none;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
-    .btn-aura:hover::after {
-      opacity: 1;
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Mobile Responsive Nav Adjustments */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none; /* Clean collapse on mobile */
+      }
+      nav {
+        padding: 8px 14px;
+      }
+      .btn-aura {
+        padding: 7px 14px;
+        font-size: 12.5px;
+      }
+    }
+
+    /* Main Container Structure */
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 28px);
+      position: relative;
+      z-index: 10;
     }
 
     /* Hero Section */
     .hero {
-      position: relative;
-      z-index: 10;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 160px 24px 80px;
+      padding-top: clamp(100px, 16vw, 150px);
+      padding-bottom: clamp(40px, 8vw, 80px);
       text-align: center;
     }
 
     .eyebrow-pill {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 18px;
+      gap: 8px;
+      padding: 6px 14px;
       background: rgba(139, 92, 246, 0.1);
       border: 1px solid rgba(139, 92, 246, 0.25);
       border-radius: 9999px;
       color: #c4b5fd;
-      font-size: 13px;
+      font-size: clamp(11.5px, 2.6vw, 13px);
       font-weight: 600;
-      margin-bottom: 28px;
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
-      animation: fadeInDown 0.8s ease-out;
+      margin-bottom: 24px;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+      max-width: 100%;
     }
 
     .pulse-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: var(--accent-emerald);
-      box-shadow: 0 0 10px var(--accent-emerald);
-      animation: blink 2s infinite;
+      box-shadow: 0 0 8px var(--accent-emerald);
+      flex-shrink: 0;
+      animation: pulse 2s infinite;
     }
 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.7; }
     }
 
     .hero-title {
-      font-size: clamp(42px, 6.5vw, 76px);
+      font-size: clamp(32px, 6.8vw, 64px);
       font-weight: 800;
-      line-height: 1.08;
-      letter-spacing: -2px;
-      margin-bottom: 26px;
-      animation: fadeInUp 0.8s ease-out 0.1s both;
+      line-height: 1.12;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      word-break: break-word;
     }
 
     .gradient-text {
@@ -269,59 +319,63 @@
     }
 
     .hero-desc {
-      font-size: clamp(17px, 2vw, 21px);
+      font-size: clamp(15px, 2.8vw, 19px);
       color: var(--text-muted);
-      max-width: 760px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
-      animation: fadeInUp 0.8s ease-out 0.2s both;
+      max-width: 720px;
+      margin: 0 auto clamp(24px, 4vw, 36px);
+      line-height: 1.65;
     }
 
     .hero-cta-group {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       justify-content: center;
       align-items: center;
-      margin-bottom: 70px;
-      animation: fadeInUp 0.8s ease-out 0.3s both;
+      margin-bottom: clamp(36px, 6vw, 56px);
+      flex-wrap: wrap;
     }
 
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 13px 28px;
-      border-radius: 9999px;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      color: #cbd5e1;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      transition: all 0.2s ease;
+    @media (max-width: 480px) {
+      .hero-cta-group {
+        flex-direction: column;
+        width: 100%;
+      }
+      .hero-cta-group .btn-aura,
+      .hero-cta-group .btn-secondary {
+        width: 100%;
+        max-width: 320px;
+      }
     }
 
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    /* Live Studio Console (Interactive Terminal) */
-    .studio-window {
-      max-width: 860px;
+    /* Live Interactive Search Studio Console */
+    .studio-wrapper {
+      width: 100%;
+      max-width: 820px;
       margin: 0 auto;
-      background: rgba(15, 23, 42, 0.75);
+      position: relative;
+    }
+
+    .studio-glow {
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.2), transparent 70%);
+      border-radius: clamp(16px, 4vw, 24px);
+      filter: blur(15px);
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    .studio-window {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.88);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 24px;
-      box-shadow: 
-        0 40px 80px -20px rgba(0, 0, 0, 0.8),
-        0 0 50px rgba(139, 92, 246, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      border-radius: clamp(16px, 4vw, 24px);
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
       overflow: hidden;
-      animation: scaleUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
       text-align: left;
     }
 
@@ -329,19 +383,22 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 24px;
+      padding: 12px clamp(12px, 3vw, 20px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       background: rgba(255, 255, 255, 0.02);
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .traffic-lights {
       display: flex;
-      gap: 8px;
+      gap: 6px;
+      align-items: center;
     }
 
     .light {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
     }
     .light-red { background: #ef4444; }
@@ -350,15 +407,16 @@
 
     .studio-status-pills {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .pill-hud {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
       border-radius: 6px;
       background: rgba(16, 185, 129, 0.12);
       border: 1px solid rgba(16, 185, 129, 0.3);
@@ -366,258 +424,411 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
     }
 
     .pill-wu {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
       border-radius: 6px;
       background: rgba(139, 92, 246, 0.15);
       border: 1px solid rgba(139, 92, 246, 0.3);
       color: #c4b5fd;
+      white-space: nowrap;
     }
 
     .studio-body {
-      padding: 28px;
+      padding: clamp(14px, 3.5vw, 24px);
     }
 
-    /* Live Search Bar */
+    /* Live Search Input */
     .search-wrap {
       position: relative;
-      margin-bottom: 22px;
+      margin-bottom: 16px;
+      width: 100%;
     }
 
     .search-wrap input {
       width: 100%;
-      padding: 18px 20px 18px 54px;
-      font-size: 17px;
+      padding: 13px 16px 13px 44px;
+      font-size: clamp(14px, 3vw, 15.5px);
       font-weight: 500;
       color: #fff;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 16px;
+      border-radius: 12px;
       outline: none;
-      transition: all 0.25s ease;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s ease;
     }
 
     .search-wrap input:focus {
       border-color: var(--primary);
       background: rgba(255, 255, 255, 0.07);
-      box-shadow: 0 0 30px rgba(139, 92, 246, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.25);
     }
 
     .search-icon-svg {
       position: absolute;
-      left: 20px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
       color: #64748b;
       pointer-events: none;
+      width: 18px;
+      height: 18px;
     }
 
     .kbd-tag {
       position: absolute;
-      right: 18px;
+      right: 12px;
       top: 50%;
       transform: translateY(-50%);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 10px;
       color: #64748b;
       background: rgba(255, 255, 255, 0.06);
-      padding: 3px 8px;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 3px 6px;
+      border-radius: 4px;
+      display: none;
     }
 
-    /* Quick Keyword Chips */
+    @media (min-width: 600px) {
+      .kbd-tag { display: block; }
+    }
+
+    /* Filter Chips */
     .chips-row {
       display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
+      gap: 6px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
       align-items: center;
     }
 
     .chip-label {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-subtle);
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      margin-right: 4px;
     }
 
     .chip {
-      padding: 5px 14px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 4px 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
       border-radius: 9999px;
-      font-size: 13px;
+      font-size: 12px;
       color: #cbd5e1;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s ease;
+      white-space: nowrap;
     }
 
     .chip:hover, .chip.active {
-      background: rgba(139, 92, 246, 0.2);
+      background: rgba(139, 92, 246, 0.22);
       border-color: var(--primary);
       color: #fff;
     }
 
-    /* Search Results Feed */
+    /* Results Feed */
     .results-grid {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      max-height: 340px;
+      gap: 8px;
+      max-height: 300px;
       overflow-y: auto;
-      padding-right: 4px;
+      padding-right: 2px;
+    }
+
+    .results-grid::-webkit-scrollbar {
+      width: 5px;
+    }
+    .results-grid::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
     }
 
     .result-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 20px;
+      padding: 11px clamp(10px, 2.5vw, 16px);
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 14px;
-      transition: all 0.2s ease;
+      border-radius: 10px;
+      gap: 10px;
+      transition: background 0.15s ease;
     }
 
     .result-row:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.12);
-      transform: translateX(3px);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
     }
 
     .item-meta {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
     }
 
-    .item-avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.06);
+    .item-icon-box {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(139, 92, 246, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      flex-shrink: 0;
+      color: #c4b5fd;
+    }
+
+    .item-text-wrap {
+      min-width: 0;
+      flex: 1;
     }
 
     .item-name {
       font-weight: 600;
-      font-size: 15px;
+      font-size: 13.5px;
       color: #f8fafc;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .typo-badge {
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 9.5px;
+      font-weight: 700;
       color: #fbbf24;
       background: rgba(245, 158, 11, 0.15);
-      padding: 2px 8px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 2px 5px;
       border-radius: 4px;
-      border: 1px solid rgba(245, 158, 11, 0.25);
+      flex-shrink: 0;
     }
 
     .item-desc {
-      font-size: 13px;
+      font-size: 11.5px;
       color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1px;
     }
 
     .item-val {
-      font-size: 16px;
+      font-size: 14.5px;
       font-weight: 700;
       color: #38bdf8;
       font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
     }
 
-    /* Comparison Section */
+    /* Social Proof Bar */
+    .proof-banner {
+      width: 100%;
+      max-width: 820px;
+      margin: 28px auto 0;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px clamp(12px, 3vw, 24px);
+    }
+
+    .proof-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: clamp(11.5px, 2.4vw, 13px);
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Section Styling */
     .section {
-      position: relative;
-      z-index: 10;
-      max-width: 1100px;
-      margin: 120px auto 60px;
-      padding: 0 24px;
+      padding: clamp(60px, 10vw, 100px) 0;
       text-align: center;
     }
 
     .sec-tag {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1.5px;
       color: var(--primary-light);
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
 
     .sec-title {
-      font-size: clamp(32px, 4.5vw, 48px);
+      font-size: clamp(24px, 5vw, 42px);
       font-weight: 800;
       letter-spacing: -1px;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
+      line-height: 1.2;
     }
 
     .sec-subtitle {
-      font-size: 17px;
+      font-size: clamp(14px, 2.5vw, 16.5px);
       color: var(--text-muted);
-      max-width: 650px;
-      margin: 0 auto 60px;
+      max-width: 620px;
+      margin: 0 auto clamp(28px, 5vw, 44px);
+      line-height: 1.6;
     }
 
+    /* Interactive Comparison Benchmarks */
+    .benchmarks-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: clamp(16px, 4vw, 22px);
+      padding: clamp(20px, 4vw, 36px);
+      max-width: 860px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .benchmark-row {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .benchmark-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .benchmark-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .benchmark-label {
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .benchmark-diff {
+      font-size: 12px;
+      font-weight: 700;
+      color: #10b981;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .bar-container {
+      width: 100%;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding: 3px;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bar-bubble {
+      width: 100%;
+      background: rgba(239, 68, 68, 0.25);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #f87171;
+    }
+
+    .bar-zero {
+      width: 4%;
+      min-width: 90px;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+      color: #030712;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Comparison Cards Grid */
     .side-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
+      grid-template-columns: 1fr;
+      gap: 18px;
       text-align: left;
+      margin-top: 36px;
+    }
+
+    @media (min-width: 768px) {
+      .side-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
     }
 
     .card-dark {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 40px;
+      border-radius: clamp(16px, 4vw, 22px);
+      padding: clamp(20px, 4vw, 32px);
       backdrop-filter: blur(20px);
-      transition: all 0.3s ease;
+      -webkit-backdrop-filter: blur(20px);
     }
 
     .card-dark.winner {
-      border-color: rgba(139, 92, 246, 0.5);
-      box-shadow: 0 0 50px rgba(139, 92, 246, 0.15);
-      background: linear-gradient(180deg, rgba(139, 92, 246, 0.08) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 0 35px rgba(139, 92, 246, 0.12);
+      background: linear-gradient(180deg, rgba(139, 92, 246, 0.08) 0%, rgba(15, 23, 42, 0.85) 100%);
     }
 
     .card-title-row {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 28px;
+      gap: 10px;
+      margin-bottom: 20px;
     }
 
     .card-title-row h3 {
-      font-size: 24px;
+      font-size: clamp(18px, 3.2vw, 21px);
       font-weight: 700;
     }
 
     .metric-item {
       display: flex;
       align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .metric-item:last-child {
+      margin-bottom: 0;
     }
 
     .metric-icon {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       border-radius: 8px;
       display: flex;
       align-items: center;
@@ -629,73 +840,120 @@
     .icon-pass { background: rgba(16, 185, 129, 0.15); color: #34d399; }
 
     .metric-text h4 {
-      font-size: 16px;
+      font-size: 14.5px;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
+      color: #fff;
     }
 
     .metric-text p {
-      font-size: 14px;
+      font-size: 12.5px;
       color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* 3 Step Onboarding Flow */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      text-align: left;
+    }
+
+    @media (min-width: 768px) {
+      .steps-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: clamp(14px, 3.5vw, 18px);
+      padding: clamp(20px, 4vw, 28px);
+      position: relative;
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #c4b5fd;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .step-card h3 {
+      font-size: 16.5px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .step-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
     }
 
     /* Pricing Section */
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 26px;
-      margin-top: 50px;
+      grid-template-columns: 1fr;
+      gap: 20px;
       text-align: left;
+    }
+
+    @media (min-width: 860px) {
+      .pricing-grid { grid-template-columns: repeat(3, 1fr); gap: 22px; }
     }
 
     .pricing-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 40px 32px;
+      border-radius: clamp(16px, 4vw, 22px);
+      padding: clamp(24px, 4.5vw, 34px) clamp(18px, 3.5vw, 26px);
       display: flex;
       flex-direction: column;
-      backdrop-filter: blur(20px);
       position: relative;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .pricing-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(255, 255, 255, 0.2);
     }
 
     .pricing-card.hot {
       border-color: var(--primary);
-      box-shadow: 0 20px 50px rgba(139, 92, 246, 0.25);
-      background: linear-gradient(180deg, rgba(139, 92, 246, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
+      box-shadow: 0 15px 40px rgba(139, 92, 246, 0.22);
+      background: linear-gradient(180deg, rgba(139, 92, 246, 0.1) 0%, rgba(15, 23, 42, 0.88) 100%);
     }
 
     .tag-badge {
       position: absolute;
-      top: -14px;
-      right: 28px;
+      top: -12px;
+      right: 20px;
       background: linear-gradient(135deg, #8b5cf6, #06b6d4);
       color: #fff;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
-      padding: 5px 14px;
+      padding: 4px 11px;
       border-radius: 9999px;
-      letter-spacing: 0.6px;
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
     }
 
     .price-num {
-      font-size: 52px;
+      font-size: clamp(38px, 7vw, 46px);
       font-weight: 800;
       color: #fff;
-      margin: 18px 0 6px;
-      letter-spacing: -1.5px;
+      margin: 12px 0 4px;
+      letter-spacing: -1px;
     }
 
     .price-num span {
-      font-size: 16px;
+      font-size: 14.5px;
       font-weight: 500;
       color: var(--text-muted);
       letter-spacing: normal;
@@ -705,56 +963,92 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      margin: 30px 0 40px;
+      gap: 12px;
+      margin: 20px 0 28px;
       flex-grow: 1;
     }
 
     .feature-list li {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
-      font-size: 14px;
+      font-size: 13.5px;
       color: #cbd5e1;
+      line-height: 1.45;
     }
 
     .check-svg {
       color: var(--accent-emerald);
       flex-shrink: 0;
+      margin-top: 2px;
     }
 
-    /* Social Proof Banner */
-    .proof-banner {
-      max-width: 900px;
-      margin: 40px auto 0;
-      padding: 24px 32px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
+    /* FAQ Section */
+    .faq-list {
+      max-width: 760px;
+      margin: 0 auto;
       display: flex;
-      align-items: center;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      gap: 20px;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
     }
 
-    .proof-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
+    .faq-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .faq-item:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .faq-question {
+      padding: 16px 20px;
       font-weight: 600;
+      font-size: 15px;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      user-select: none;
+    }
+
+    .faq-arrow {
+      transition: transform 0.2s ease;
       color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .faq-item.open .faq-arrow {
+      transform: rotate(180deg);
+      color: var(--primary-light);
+    }
+
+    .faq-answer {
+      display: none;
+      padding: 0 20px 18px 20px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .faq-item.open .faq-answer {
+      display: block;
     }
 
     /* Footer */
     footer {
       border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 60px 24px;
+      padding: 50px 20px 40px;
       text-align: center;
       color: var(--text-muted);
-      font-size: 14px;
-      margin-top: 120px;
+      font-size: 13px;
+      margin-top: 60px;
       position: relative;
       z-index: 10;
     }
@@ -762,81 +1056,64 @@
     .footer-links {
       display: flex;
       justify-content: center;
-      gap: 28px;
-      margin-bottom: 24px;
+      gap: clamp(14px, 3vw, 24px);
+      margin-bottom: 18px;
+      flex-wrap: wrap;
     }
 
     .footer-links a {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13px;
       transition: color 0.2s;
     }
 
     .footer-links a:hover {
       color: #fff;
     }
-
-    /* Keyframe Animations */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(25px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes scaleUp {
-      from { opacity: 0; transform: scale(0.96); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    /* Responsive */
-    @media (max-width: 860px) {
-      .nav-links { display: none; }
-      .pricing-grid, .side-grid { grid-template-columns: 1fr; }
-      .hero-cta-group { flex-direction: column; }
-      .hero { padding-top: 130px; }
-    }
   </style>
 </head>
 <body>
 
-  <!-- Ambient Aurora Glows -->
-  <div class="aurora-container">
+  <!-- Ambient Glowing Aurora Mesh -->
+  <div class="aurora-container" aria-hidden="true">
     <div class="aurora-blob blob-1"></div>
     <div class="aurora-blob blob-2"></div>
     <div class="aurora-blob blob-3"></div>
   </div>
-  <div class="grid-overlay"></div>
+  <div class="grid-overlay" aria-hidden="true"></div>
 
-  <!-- Floating Navbar -->
+  <!-- Floating Pill Navbar -->
   <div class="nav-wrapper">
     <nav>
       <a href="#" class="brand">
-        <div class="brand-icon">⚡</div>
-        Zero-Code Sync
+        <div class="brand-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <span>Zero-Code Sync</span>
       </a>
+      
       <div class="nav-links">
         <a href="#demo">Live Console</a>
-        <a href="#why-us">Why Us</a>
+        <a href="#benchmarks">Speed Tests</a>
+        <a href="#how-it-works">How It Works</a>
         <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
       </div>
+
       <a href="#pricing" class="btn-aura">
         Get Started Free
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </nav>
   </div>
 
   <!-- Hero Section -->
-  <section class="hero">
+  <header class="hero container">
     <div class="eyebrow-pill">
       <div class="pulse-dot"></div>
-      <span>Powered by Meilisearch v1.53 • Sub-20ms Search Speed</span>
+      <span>Sub-20ms Search • 0 Workload Units • Powered by Meilisearch</span>
     </div>
 
     <h1 class="hero-title">
@@ -845,201 +1122,389 @@
     </h1>
 
     <p class="hero-desc">
-      Stop paying thousands in Bubble Workload Units (WUs) for slow database searches. 
-      Zero-Code Sync offloads search to an instant, typo-tolerant Meilisearch cluster in under 5 minutes with zero code.
+      Stop paying thousands in Bubble Workload Units for sluggish database table scans.
+      Zero-Code Sync connects your Bubble app to an ultra-fast, typo-tolerant search engine in under 5 minutes with zero code.
     </p>
 
     <div class="hero-cta-group">
-      <a href="#pricing" class="btn-aura" style="padding: 15px 34px; font-size: 16px;">
+      <a href="#pricing" class="btn-aura" style="padding: 13px 26px; font-size: 14.5px;">
         Start Free Trial (1,000 Records)
       </a>
-      <a href="#demo" class="btn-secondary">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-        Try Live Interactive Demo
+      <a href="#demo" class="btn-secondary" style="padding: 13px 22px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
+        </svg>
+        Test Live Search Console
       </a>
     </div>
 
     <!-- Live Interactive Search Console -->
-    <div class="studio-window" id="demo">
-      <div class="studio-header">
-        <div class="traffic-lights">
-          <div class="light light-red"></div>
-          <div class="light light-yellow"></div>
-          <div class="light light-green"></div>
-        </div>
-        <div class="studio-status-pills">
-          <div class="pill-hud" id="hudLatency">
-            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#10b981;"></span>
-            4ms latency
+    <div class="studio-wrapper" id="demo">
+      <div class="studio-glow"></div>
+      <div class="studio-window">
+        <!-- Header -->
+        <div class="studio-header">
+          <div class="traffic-lights">
+            <div class="light light-red"></div>
+            <div class="light light-yellow"></div>
+            <div class="light light-green"></div>
           </div>
-          <div class="pill-wu">0 Bubble WUs</div>
-        </div>
-      </div>
-
-      <div class="studio-body">
-        <!-- Search Input -->
-        <div class="search-wrap">
-          <svg class="search-icon-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" id="liveInput" placeholder="Try typing 'nikke' (typo test), 'keyboard', or 'bag'..." value="nikke">
-          <div class="kbd-tag">ESC to clear</div>
+          <div class="studio-status-pills">
+            <div class="pill-hud" id="hudLatency">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#10b981;"></span>
+              4ms latency
+            </div>
+            <div class="pill-wu">0 Bubble WUs</div>
+          </div>
         </div>
 
-        <!-- Filter Chips -->
-        <div class="chips-row">
-          <span class="chip-label">Quick Tests:</span>
-          <button class="chip active" onclick="setQuery('nikke')">"nikke" (Typo Match)</button>
-          <button class="chip" onclick="setQuery('keyboard')">"keyboard"</button>
-          <button class="chip" onclick="setQuery('bag')">"bag"</button>
-          <button class="chip" onclick="setQuery('wallaper')">"wallaper" (Typo)</button>
-        </div>
+        <!-- Body -->
+        <div class="studio-body">
+          <div class="search-wrap">
+            <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="liveInput" placeholder="Try typing 'nikke', 'keyboard', or 'bag'..." value="nikke" autocomplete="off" spellcheck="false">
+            <div class="kbd-tag">ESC to clear</div>
+          </div>
 
-        <!-- Live Results Feed -->
-        <div class="results-grid" id="resultsFeed">
-          <!-- Rendered via JS -->
+          <!-- Suggested Query Chips -->
+          <div class="chips-row">
+            <span class="chip-label">Try:</span>
+            <button class="chip active" onclick="handleChipClick('nikke')">"nikke" (Typo)</button>
+            <button class="chip" onclick="handleChipClick('keyboard')">"keyboard"</button>
+            <button class="chip" onclick="handleChipClick('bag')">"bag"</button>
+            <button class="chip" onclick="handleChipClick('wallaper')">"wallaper"</button>
+          </div>
+
+          <!-- Results Grid -->
+          <div class="results-grid" id="resultsFeed">
+            <!-- Populated via JavaScript -->
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Proof Badges -->
+    <!-- Social Proof Badges -->
     <div class="proof-banner">
       <div class="proof-item">
-        <span style="color:#10b981;">●</span> Zero Workload Units on Searches
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Zero Workload Units on Searches</span>
       </div>
       <div class="proof-item">
-        <span style="color:#8b5cf6;">●</span> 1-Click Database Trigger Sync
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Real-time Background Sync</span>
       </div>
       <div class="proof-item">
-        <span style="color:#38bdf8;">●</span> Automatic Typo Tolerance
-      </div>
-      <div class="proof-item">
-        <span style="color:#f59e0b;">●</span> 100% Native Bubble Compatibility
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Instant Typo Correction</span>
       </div>
     </div>
-  </section>
+  </header>
 
-  <!-- Problem vs Solution Comparison -->
-  <section class="section" id="why-us">
-    <div class="sec-tag">Architecture Comparison</div>
-    <h2 class="sec-title">Why Native Bubble Search Fails at Scale</h2>
-    <p class="sec-subtitle">The real difference between database table scanning and dedicated search engine indexing.</p>
+  <!-- Benchmark Comparison Section -->
+  <section class="section container" id="benchmarks">
+    <div class="sec-tag">Performance Benchmarks</div>
+    <h2 class="sec-title">100x Faster. Zero Overhead.</h2>
+    <p class="sec-subtitle">Tested against a live Bubble database with 10,000 product records.</p>
 
+    <div class="benchmarks-card">
+      <!-- Row 1: Latency -->
+      <div class="benchmark-row">
+        <div class="benchmark-label-row">
+          <span class="benchmark-label">Search Query Latency (P95)</span>
+          <span class="benchmark-diff">99.7% FASTER</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="font-size:11.5px; color:var(--text-muted); display:flex; justify-content:space-between;">
+            <span>Native Bubble SQL Filter</span>
+            <span style="color:#f87171; font-weight:700;">4,200ms</span>
+          </div>
+          <div class="bar-container">
+            <div class="bar-fill bar-bubble">4,200ms (High user drop-off)</div>
+          </div>
+
+          <div style="font-size:11.5px; color:var(--text-muted); display:flex; justify-content:space-between; margin-top:4px;">
+            <span>Zero-Code Sync (Meilisearch Engine)</span>
+            <span style="color:#10b981; font-weight:700;">12ms</span>
+          </div>
+          <div class="bar-container">
+            <div class="bar-fill bar-zero">12ms (Instant)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Workload Units -->
+      <div class="benchmark-row">
+        <div class="benchmark-label-row">
+          <span class="benchmark-label">Workload Units (WUs) Per 1,000 Searches</span>
+          <span class="benchmark-diff">100% SAVINGS</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="font-size:11.5px; color:var(--text-muted); display:flex; justify-content:space-between;">
+            <span>Native Bubble Table Scan</span>
+            <span style="color:#f87171; font-weight:700;">~150,000 WUs ($45+)</span>
+          </div>
+          <div class="bar-container">
+            <div class="bar-fill bar-bubble">150k WUs / Month</div>
+          </div>
+
+          <div style="font-size:11.5px; color:var(--text-muted); display:flex; justify-content:space-between; margin-top:4px;">
+            <span>Zero-Code Sync Client Execution</span>
+            <span style="color:#10b981; font-weight:700;">0 WUs ($0.00)</span>
+          </div>
+          <div class="bar-container">
+            <div class="bar-fill bar-zero">0 WUs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side-by-Side Comparison -->
     <div class="side-grid">
       <div class="card-dark">
         <div class="card-title-row">
-          <div style="font-size:24px;">❌</div>
+          <div style="font-size:20px;">❌</div>
           <h3 style="color: #f87171;">Native Bubble Search</h3>
         </div>
 
         <div class="metric-item">
-          <div class="metric-icon icon-fail">⏱</div>
+          <div class="metric-icon icon-fail">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
           <div class="metric-text">
-            <h4>3,000ms – 10,000ms Latency</h4>
-            <p>Scanning unindexed SQL rows on Bubble servers freezes page repeating groups as records grow past 5,000.</p>
+            <h4>Sluggish Database Scanning</h4>
+            <p>Bubble scans unindexed database rows sequentially, causing visible 3 to 8-second page freezes as datasets grow.</p>
           </div>
         </div>
 
         <div class="metric-item">
-          <div class="metric-icon icon-fail">💸</div>
+          <div class="metric-icon icon-fail">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
           <div class="metric-text">
-            <h4>Workload Unit (WU) Hemorrhage</h4>
-            <p>Every keystroke with <code>:filtered</code> scans all candidate records in memory, burning tens of thousands of WUs monthly.</p>
+            <h4>Costly Workload Unit Spikes</h4>
+            <p>Filtering lists on the server burns Workload Units on every single keystroke, leading to painful overage charges.</p>
           </div>
         </div>
 
         <div class="metric-item">
-          <div class="metric-icon icon-fail">🔤</div>
+          <div class="metric-icon icon-fail">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </div>
           <div class="metric-text">
             <h4>Zero Typo Tolerance</h4>
-            <p>Only matches exact substrings. A customer searching for "sneekers" sees a blank screen with 0 results.</p>
+            <p>Customers typing "sneekers" or "airpod" get 0 results, resulting in lost conversions and customer frustration.</p>
           </div>
         </div>
       </div>
 
       <div class="card-dark winner">
         <div class="card-title-row">
-          <div style="font-size:24px;">⚡</div>
+          <div style="font-size:20px;">⚡</div>
           <h3 style="color: #c4b5fd;">Zero-Code Sync</h3>
         </div>
 
         <div class="metric-item">
-          <div class="metric-icon icon-pass">⚡</div>
+          <div class="metric-icon icon-pass">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
           <div class="metric-text">
-            <h4>Sub-20ms Global Response Time</h4>
-            <p>Searches hit a high-speed Rust-based Meilisearch cluster directly from the user's browser in milliseconds.</p>
+            <h4>Sub-20ms Global Search</h4>
+            <p>Searches hit a high-speed Rust-based Meilisearch cluster directly from the browser with sub-20ms response time.</p>
           </div>
         </div>
 
         <div class="metric-item">
-          <div class="metric-icon icon-pass">🛡</div>
+          <div class="metric-icon icon-pass">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
           <div class="metric-text">
-            <h4>Zero Bubble Workload Units</h4>
-            <p>Search queries completely bypass Bubble's backend servers. You save hundreds of dollars in Bubble overage bills.</p>
+            <h4>Zero Workload Units</h4>
+            <p>Queries bypass Bubble's backend entirely. Run 500,000+ searches without spending a single Workload Unit.</p>
           </div>
         </div>
 
         <div class="metric-item">
-          <div class="metric-icon icon-pass">🎯</div>
+          <div class="metric-icon icon-pass">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
           <div class="metric-text">
-            <h4>Instant Typo Tolerance & Ranking</h4>
-            <p>Automatic Levenshtein distance matching finds the right products even when visitors make spelling errors.</p>
+            <h4>Out-of-the-Box Typo Tolerance</h4>
+            <p>Smart fuzzy matching instantly surfaces the right items even when users make spelling or grammar mistakes.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- How It Works (3 Simple Steps) -->
+  <section class="section container" id="how-it-works">
+    <div class="sec-tag">Effortless Integration</div>
+    <h2 class="sec-title">Up and Running in 5 Minutes</h2>
+    <p class="sec-subtitle">Zero code, zero complex configurations. Just plug and play.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h3>Install Plugin</h3>
+        <p>Add Zero-Code Sync to your Bubble app with one click directly from the Bubble Plugin Marketplace.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h3>Connect Meilisearch</h3>
+        <p>Enter your Meilisearch URL and Host Key. Our sync engine automatically indexes your selected data types.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h3>Bind Search Input</h3>
+        <p>Drop the Zero-Code Sync element onto your page and bind its Result IDs directly to your Repeating Group.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- Pricing Table -->
-  <section class="section" id="pricing">
+  <section class="section container" id="pricing">
     <div class="sec-tag">Predictable Plans</div>
     <h2 class="sec-title">Simple Pricing. Pure Profit.</h2>
     <p class="sec-subtitle">Save hundreds on Bubble Workload Units for a predictable flat monthly fee.</p>
 
     <div class="pricing-grid">
-      <!-- Free -->
+      <!-- Developer / Free -->
       <div class="pricing-card">
-        <h3 style="font-size:20px; font-weight:700;">Developer / Free</h3>
-        <p style="font-size:14px; color:var(--text-muted); margin-top:4px;">For testing & building</p>
-        <div class="price-num">$0 <span>/ month</span></div>
+        <h3 style="font-size:18px; font-weight:700;">Developer / Free</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">For testing & building</p>
+        <div class="price-num">$0 <span>/ mo</span></div>
         <ul class="feature-list">
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Up to 1,000 records</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>5,000 searches / month</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Typo tolerance included</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Community support</li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Up to 1,000 indexed records
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            5,000 searches / month
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Instant typo tolerance
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Community support
+          </li>
         </ul>
         <a href="https://bubble.io/home/plugins" class="btn-secondary" style="text-align:center; justify-content:center;">Get Started Free</a>
       </div>
 
-      <!-- Starter (Featured) -->
+      <!-- Starter (Most Popular) -->
       <div class="pricing-card hot">
         <div class="tag-badge">Most Popular</div>
-        <h3 style="font-size:20px; font-weight:700;">Starter</h3>
-        <p style="font-size:14px; color:var(--text-muted); margin-top:4px;">For live stores & directories</p>
-        <div class="price-num">$19 <span>/ month</span></div>
+        <h3 style="font-size:18px; font-weight:700;">Starter</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">For live e-commerce & directories</p>
+        <div class="price-num">$19 <span>/ mo</span></div>
         <ul class="feature-list">
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Up to 25,000 records</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>100,000 searches / month</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Automated 24/7 background sync</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Zero Bubble Workload Units used</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Priority email support</li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Up to 25,000 indexed records
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            100,000 searches / month
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Automated 24/7 background sync
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Zero Bubble Workload Units
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Priority email support
+          </li>
         </ul>
         <a href="#subscribe" class="btn-aura" style="text-align:center; justify-content:center;">Subscribe to Starter</a>
       </div>
 
       <!-- Pro -->
       <div class="pricing-card">
-        <h3 style="font-size:20px; font-weight:700;">Pro</h3>
-        <p style="font-size:14px; color:var(--text-muted); margin-top:4px;">For growing marketplaces</p>
-        <div class="price-num">$49 <span>/ month</span></div>
+        <h3 style="font-size:18px; font-weight:700;">Pro</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">For fast-growing marketplaces</p>
+        <div class="price-num">$49 <span>/ mo</span></div>
         <ul class="feature-list">
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Up to 150,000 records</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>500,000 searches / month</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Meilisearch Tenant Tokens (Privacy Rules)</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Multiple data types & indexes</li>
-          <li><svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Direct WhatsApp / Slack founder support</li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Up to 150,000 indexed records
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            500,000 searches / month
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Multi-index tenant isolation
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Custom faceting & filters
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Dedicated Slack channel & SLA
+          </li>
         </ul>
         <a href="#subscribe" class="btn-secondary" style="text-align:center; justify-content:center;">Upgrade to Pro</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="section container" id="faq">
+    <div class="sec-tag">Common Questions</div>
+    <h2 class="sec-title">Frequently Asked Questions</h2>
+    <p class="sec-subtitle">Everything you need to know about Zero-Code Sync and Bubble Workload Units.</p>
+
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Does this really consume 0 Bubble Workload Units?</span>
+          <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          Yes, 100%. Traditional Bubble searches run on Bubble's database servers via <code>:filtered</code> or SQL scans, charging you Workload Units for each keystroke. Zero-Code Sync queries your dedicated Meilisearch cluster directly from the user's browser, completely bypassing Bubble's servers and eliminating search WUs.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>How does data sync from Bubble to Meilisearch?</span>
+          <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          You can sync your data in two ways: either run a 1-click initial bulk sync from our dashboard, or configure native Bubble Database Triggers (Backend Workflows) that automatically push new or updated records to Zero-Code Sync in real time.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Can I use my own self-hosted Meilisearch instance?</span>
+          <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          Absolutely. You can use our fully managed cloud cluster, your own Meilisearch Cloud account, or any self-hosted Meilisearch instance running on AWS, DigitalOcean, or Hetzner. Just plug in your Meilisearch Host URL and API key.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Does it work on the Bubble Free or Starter plan?</span>
+          <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">
+          Yes! The client plugin works seamlessly across all Bubble plans, including Free and Starter tiers. It simply binds to any standard input element and outputs an array of Bubble unique IDs for your Repeating Group.
+        </div>
       </div>
     </div>
   </section>
@@ -1047,40 +1512,41 @@
   <!-- Footer -->
   <footer>
     <div class="footer-links">
-      <a href="#demo">Live Demo</a>
-      <a href="#why-us">Architecture</a>
+      <a href="#demo">Live Console</a>
+      <a href="#benchmarks">Benchmarks</a>
+      <a href="#how-it-works">How It Works</a>
       <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
       <a href="https://bubble.io/home/plugins">Bubble Plugin</a>
-      <a href="mailto:support@zerocodesync.com">Contact</a>
     </div>
-    <p>© 2026 Zero-Code Sync. Built for modern Bubble.io applications.</p>
-    <p style="margin-top: 6px; font-size: 13px; color: var(--text-subtle);">Running 24/7 on Render & Meilisearch Cloud Singapore.</p>
+    <p>© 2026 Zero-Code Sync. All rights reserved. Built for modern Bubble.io applications.</p>
+    <p style="margin-top: 6px; font-size: 12px; color: var(--text-subtle);">Running 24/7 on high-availability cloud infrastructure with sub-20ms P99 global latency.</p>
   </footer>
 
   <script>
-    // Live Real-World Sample Catalog (matching actual Bubble store data)
-    const storeCatalog = [
-      { name: "Nike Running Shoes", category: "Shoes", price: "$234", icon: "👟", tags: ["nike", "nikke", "shoes", "shooes", "running"] },
-      { name: "Wireless Mechanical Keyboard", category: "Hardware", price: "$150", icon: "⌨️", tags: ["keyboard", "keybord", "wireless", "mechanical"] },
-      { name: "Green Canvas Tote Bag", category: "Bags", price: "$200", icon: "👜", tags: ["bag", "green", "tote"] },
-      { name: "Luxury Crossbody Bag", category: "Bags", price: "$2,000", icon: "👛", tags: ["bag", "crossbody", "luxury"] },
-      { name: "Cotton Crewneck T-Shirt", category: "Apparel", price: "$100", icon: "👕", tags: ["shirt", "tshirt", "cotton"] },
-      { name: "Aesthetic Room Wallpaper", category: "Decor", price: "$222", icon: "🖼️", tags: ["wallpaper", "wallaper", "room"] }
+    // Product catalog for live interactive console
+    const catalog = [
+      { name: "Nike Air Jordan 1 Retro", category: "Footwear", price: "$234", icon: "👟", tags: ["nike", "nikke", "jordan", "shoes", "running", "sneakers"] },
+      { name: "Wireless Mechanical Keyboard", category: "Hardware", price: "$150", icon: "⌨️", tags: ["keyboard", "keybord", "wireless", "mechanical", "gaming"] },
+      { name: "Green Canvas Tote Bag", category: "Accessories", price: "$45", icon: "👜", tags: ["bag", "green", "tote", "canvas", "accessories"] },
+      { name: "Luxury Italian Leather Crossbody", category: "Bags", price: "$480", icon: "👛", tags: ["bag", "crossbody", "luxury", "leather"] },
+      { name: "Heavyweight Cotton T-Shirt", category: "Apparel", price: "$38", icon: "👕", tags: ["shirt", "tshirt", "cotton", "apparel"] },
+      { name: "Minimalist Scandinavian Room Wallpaper", category: "Home Decor", price: "$120", icon: "🖼️", tags: ["wallpaper", "wallaper", "room", "decor", "home"] }
     ];
 
     const searchInput = document.getElementById('liveInput');
     const resultsContainer = document.getElementById('resultsFeed');
     const hudLatency = document.getElementById('hudLatency');
 
-    function executeLiveSearch(query) {
+    function performSearch(query) {
       const q = query.toLowerCase().trim();
       const start = performance.now();
 
       let hits = [];
       if (!q) {
-        hits = storeCatalog;
+        hits = catalog;
       } else {
-        hits = storeCatalog.filter(item => {
+        hits = catalog.filter(item => {
           const matchName = item.name.toLowerCase().includes(q);
           const matchCat = item.category.toLowerCase().includes(q);
           const matchTags = item.tags.some(t => t.includes(q) || (q.length >= 4 && t.startsWith(q.slice(0, 3))));
@@ -1093,9 +1559,9 @@
 
       if (hits.length === 0) {
         resultsContainer.innerHTML = `
-          <div style="padding: 30px; text-align: center; color: #64748b;">
-            <div style="font-size: 24px; margin-bottom: 8px;">🔍</div>
-            No results found for "<strong style="color:#cbd5e1;">${query}</strong>"
+          <div style="padding: 26px; text-align: center; color: #64748b;">
+            <div style="font-size: 22px; margin-bottom: 6px;">🔍</div>
+            No items found for "<strong style="color:#cbd5e1;">${escapeHtml(query)}</strong>"
           </div>
         `;
         return;
@@ -1106,13 +1572,13 @@
         return `
           <div class="result-row">
             <div class="item-meta">
-              <div class="item-avatar">${hit.icon}</div>
-              <div>
+              <div class="item-icon-box">${hit.icon}</div>
+              <div class="item-text-wrap">
                 <div class="item-name">
-                  ${hit.name}
+                  ${escapeHtml(hit.name)}
                   ${isTypo ? `<span class="typo-badge">Typo Matched</span>` : ''}
                 </div>
-                <div class="item-desc">${hit.category} • Instant Indexed Match</div>
+                <div class="item-desc">${escapeHtml(hit.category)} • 0 Bubble WUs</div>
               </div>
             </div>
             <div class="item-val">${hit.price}</div>
@@ -1121,27 +1587,39 @@
       }).join('');
     }
 
-    function setQuery(text) {
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+
+    function handleChipClick(text) {
       searchInput.value = text;
-      // Update chip active classes
       document.querySelectorAll('.chip').forEach(btn => {
         btn.classList.toggle('active', btn.textContent.includes(text));
       });
-      executeLiveSearch(text);
+      performSearch(text);
     }
 
-    searchInput.addEventListener('input', (e) => executeLiveSearch(e.target.value));
+    searchInput.addEventListener('input', (e) => {
+      document.querySelectorAll('.chip').forEach(btn => btn.classList.remove('active'));
+      performSearch(e.target.value);
+    });
 
-    // Keyboard hotkey ESC to clear
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         searchInput.value = '';
-        executeLiveSearch('');
+        performSearch('');
       }
     });
 
-    // Initial render
-    executeLiveSearch(searchInput.value);
+    function toggleFaq(elem) {
+      const parent = elem.closest('.faq-item');
+      parent.classList.toggle('open');
+    }
+
+    // Initial Search Execution
+    performSearch(searchInput.value);
   </script>
 </body>
 </html>
