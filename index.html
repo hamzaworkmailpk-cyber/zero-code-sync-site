@@ -905,12 +905,14 @@
     .pricing-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 24px;
       text-align: left;
+      max-width: 860px;
+      margin: 0 auto;
     }
 
-    @media (min-width: 860px) {
-      .pricing-grid { grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    @media (min-width: 768px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); gap: 26px; }
     }
 
     .pricing-card {
@@ -1127,8 +1129,8 @@
     </p>
 
     <div class="hero-cta-group">
-      <a href="#pricing" class="btn-aura" style="padding: 13px 26px; font-size: 14.5px;">
-        Start Free Trial (1,000 Records)
+      <a href="https://bubble.io/home/plugins" target="_blank" rel="noopener noreferrer" class="btn-aura" style="padding: 13px 26px; font-size: 14.5px;">
+        Install Free Plugin
       </a>
       <a href="#demo" class="btn-secondary" style="padding: 13px 22px;">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1366,96 +1368,78 @@
 
   <!-- Pricing Table -->
   <section class="section container" id="pricing">
-    <div class="sec-tag">Predictable Plans</div>
-    <h2 class="sec-title">Simple Pricing. Pure Profit.</h2>
-    <p class="sec-subtitle">Save hundreds on Bubble Workload Units for a predictable flat monthly fee.</p>
+    <div class="sec-tag">Open Source & Services</div>
+    <h2 class="sec-title">100% Free Plugin. Optional VIP Setup.</h2>
+    <p class="sec-subtitle">Install and use the full engine for $0 forever. Need our engineers to set it up in your app? We'll handle it in 24 hours.</p>
 
     <div class="pricing-grid">
-      <!-- Developer / Free -->
+      <!-- Community Edition (Free) -->
       <div class="pricing-card">
-        <h3 style="font-size:18px; font-weight:700;">Developer / Free</h3>
-        <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">For testing & building</p>
-        <div class="price-num">$0 <span>/ mo</span></div>
+        <h3 style="font-size:20px; font-weight:700;">Community Edition</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">100% Free & Open-Source (MIT)</p>
+        <div class="price-num">$0 <span>forever</span></div>
         <ul class="feature-list">
           <li>
             <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Up to 1,000 indexed records
+            Sub-20ms instant typo-tolerant search
           </li>
           <li>
             <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Unlimited searches / month
+            <strong>0 Bubble Workload Units</strong> on queries
           </li>
           <li>
             <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Instant typo tolerance
+            Unlimited searches & unlimited records
           </li>
           <li>
             <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Community support
+            Connects to your own Meilisearch instance
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Complete step-by-step Notion documentation
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Community Discord & Forum support
           </li>
         </ul>
-        <a href="https://bubble.io/home/plugins" class="btn-secondary" style="text-align:center; justify-content:center;">Get Started Free</a>
+        <a href="https://bubble.io/home/plugins" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="text-align:center; justify-content:center; margin-top:auto;">Install Plugin (Free)</a>
       </div>
 
-      <!-- Standard (Most Popular) -->
+      <!-- Done-For-You VIP Setup -->
       <div class="pricing-card hot">
-        <div class="tag-badge">Most Popular</div>
-        <h3 style="font-size:18px; font-weight:700;">Standard</h3>
-        <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">For live e-commerce & directories</p>
-        <div class="price-num">$9 <span>/ mo</span></div>
+        <div class="tag-badge">Most Popular • 24h Turnaround</div>
+        <h3 style="font-size:20px; font-weight:700;">Done-For-You Setup</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">Complete integration by the plugin authors</p>
+        <div class="price-num">$99 <span>/ one-time</span></div>
         <ul class="feature-list">
           <li>
             <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Up to 25,000 indexed records
+            <strong>Complete Meilisearch setup & indexing</strong>
           </li>
           <li>
             <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <strong>Unlimited searches / month</strong>
+            Custom Repeating Group search UI styling
           </li>
           <li>
             <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Automated 24/7 background sync
+            Real-time Bubble database triggers configured
           </li>
           <li>
             <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Zero Bubble Workload Units
+            Speed optimization & Workload Unit audit
           </li>
           <li>
             <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Priority email support
+            Personal 1-on-1 Loom video walkthrough
+          </li>
+          <li>
+            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Delivered in 24 hours or 100% money back
           </li>
         </ul>
-        <a href="https://zero-code-sync.lemonsqueezy.com/checkout/buy/480f8246-39b5-4f91-9a42-35b4cb1bad0c" target="_blank" rel="noopener noreferrer" class="btn-aura" style="text-align:center; justify-content:center;">Subscribe to Standard</a>
-      </div>
-
-      <!-- Premium -->
-      <div class="pricing-card">
-        <h3 style="font-size:18px; font-weight:700;">Premium</h3>
-        <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">For scaling marketplaces & directories</p>
-        <div class="price-num">$29 <span>/ mo</span></div>
-        <ul class="feature-list">
-          <li>
-            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <strong>Unlimited indexed records</strong>
-          </li>
-          <li>
-            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <strong>Unlimited searches / month</strong>
-          </li>
-          <li>
-            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Multi-index & multi-database sync
-          </li>
-          <li>
-            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Tenant token isolation & custom filters
-          </li>
-          <li>
-            <svg class="check-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Dedicated Slack support & 99.9% SLA
-          </li>
-        </ul>
-        <a href="https://zero-code-sync.lemonsqueezy.com/checkout/buy/7b67ebd1-7a18-4f0b-a4cb-3a25d7a6bf5f" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="text-align:center; justify-content:center;">Upgrade to Premium</a>
+        <a href="mailto:hamzaworkmailpk@gmail.com?subject=Zero-Code%20Sync%20-%20VIP%20Setup%20Service" class="btn-aura" style="text-align:center; justify-content:center; margin-top:auto;">Book VIP Setup ($99)</a>
       </div>
     </div>
   </section>
